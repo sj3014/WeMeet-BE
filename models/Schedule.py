@@ -12,7 +12,7 @@ class Schedule(db.Model):
     schedule_name = db.Column(db.String(25))
     start_time = db.Column(db.DateTime, default=datetime.now())
     end_time = db.Column(db.DateTime, default=datetime.now())
-    user_id = db.Column(db.String(25))
+    user_id = db.Column(db.String(25), db.ForeignKey("user.user_id"))
 
 
 if __name__ == "__main__":
