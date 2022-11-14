@@ -20,7 +20,7 @@ class User(db.Model):
     groups = db.relationship('Group', secondary=user_group, backref='users')
 
     def __repr__(self):
-        return '<User {}>'.format(self.user)
+        return '<User {}>'.format(self.username)
 
     def __init__(self, username, email, password, first_name, last_name):
         self.username = username
