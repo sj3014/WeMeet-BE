@@ -28,3 +28,6 @@ class User(db.Model):
         self.password = password
         self.first_name = first_name
         self.last_name = last_name
+
+    def public_info(self):
+        return {'email': self.email, 'first_name': self.first_name, 'last_name': self.last_name}

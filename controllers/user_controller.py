@@ -1,11 +1,12 @@
-from flask import request, jsonify, make_response
+from flask import request, make_response
 import jwt
-from functools import wraps
 from models.User import User
 from models.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import json
+from middleware import login_required
+import config
 
 
 def signup():
@@ -45,34 +46,43 @@ def login():
         return make_response('Please enter a correct email and password', 400)
 
     token = jwt.encode(
-        payload={'uuid': user.uuid, 'exp': datetime.utcnow() + timedelta(days=1)},
-        key="my_secret")
+        payload={'uuid': user.uuid, 'exp': datetime.utcnow() +
+                 timedelta(days=1)},
+        key=config.Config.SECRET_KEY, algorithm='HS256')
 
-    return make_response(jsonify({'token': token}), 200)
-
-# middleware for verifying the JWT
+    return make_response({'token': token}, 200)
 
 
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        # jwt is passed in the request header
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+def get_users():
+    users = [user.public_info() for user in User.query.all()]
 
-        if not token:
-            return jsonify({'message': 'Token is missing'}), 400
+    return make_response(users, 200)
 
-        try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-            user = User.query.filter_by(uuid=data['uuid']).first()
-        except:
-            return jsonify({'message': 'Token is invalid'}), 400
 
-        # TODO: Check expiry
-        # if data['exp'] > datetime.utcnow()
+@login_required
+def update_user(user: User):
+    req = request.get_json()
 
-        return f(user, *args, **kwargs)
+    if 'email' in req:
+        user.email = req['email']
+    if 'first_name' in req:
+        user.first_name = req['first_name']
 
-    return decorated
+    if 'last_name' in req:
+        user.last_name = req['last_name']
+
+    if 'password' in req:
+        user.password = generate_password_hash(req['password'])
+
+    db.session.add(user)
+    db.session.commit()
+
+    return make_response('Success', 200)
+
+
+@login_required
+def delete_user(user: User):
+    db.session.delete(user)
+    db.session.commit()
+
+    return make_response('Success', 200)
