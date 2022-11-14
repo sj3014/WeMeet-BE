@@ -22,8 +22,8 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-    def __init__(self, user, email, password, first_name, last_name):
-        self.user = user
+    def __init__(self, username, email, password, first_name, last_name):
+        self.username = username
         self.email = email
         self.password = password
         self.first_name = first_name
