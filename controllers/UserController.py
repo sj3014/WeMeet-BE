@@ -5,10 +5,12 @@ from models.User import User
 from models.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+import json
 
 
 def signup():
-    req = request.get_json()
+    req = request.get_data()
+    req = json.loads(req)
 
     username = req['username']
     email = req['email']
