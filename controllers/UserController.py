@@ -10,8 +10,9 @@ import json
 
 def signup():
     req = request.get_data()
+    # req = request.get_json()
     req = json.loads(req)
-
+    print(req)
     username = req['username']
     email = req['email']
     password = req['password']
@@ -32,7 +33,8 @@ def signup():
 
 
 def login():
-    req = request.get_json()
+    req = request.get_data()
+    req = json.loads(req)
 
     email = req['email']
     password = req['password']
@@ -43,9 +45,10 @@ def login():
         return make_response('Please enter a correct email and password', 400)
 
     token = jwt.encode(
-        {'uuid': user.uuid, 'exp': datetime.utcnow() + timedelta(days=1)})
+        payload={'uuid': user.uuid, 'exp': datetime.utcnow() + timedelta(days=1)},
+        key="my_secret")
 
-    return make_response(jsonify({'token': token.decode('UTF-8')}), 200)
+    return make_response(jsonify({'token': token}), 200)
 
 # middleware for verifying the JWT
 
