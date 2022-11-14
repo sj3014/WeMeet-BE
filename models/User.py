@@ -11,8 +11,20 @@ class User(db.Model):
 
     uuid = db.Column(db.String(36),
                      default=lambda: str(uuid.uuid4()), primary_key=True)
-    user_name = db.Column(db.String(25))
-    first_name = db.Column(db.String(25))
-    last_name = db.Column(db.String(25))
+    username = db.Column(db.String(100), unique=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
     schedules = db.relationship('Schedule', backref='user')
     groups = db.relationship('Group', secondary=user_group, backref='users')
+
+    def __repr__(self):
+        return '<User {}>'.format(self.user)
+
+    def __init__(self, user, email, password, first_name, last_name):
+        self.user = user
+        self.email = email
+        self.password = password
+        self.first_name = first_name
+        self.last_name = last_name

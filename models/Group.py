@@ -7,8 +7,7 @@ class Group(db.Model):
 
     uuid = db.Column(db.String(36),
                      default=lambda: str(uuid.uuid4()), primary_key=True)
-    group_name = db.Column(db.String(25))
+    group_name = db.Column(db.String(100), unique=True)
 
-
-if __name__ == "__main__":
-    pass
+    def __repr__(self):
+        return '<Group {}>'.format(self.group_name)
