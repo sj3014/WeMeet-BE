@@ -1,7 +1,5 @@
 from flask import request
 
-def index():
-    return "Hello"
 
 def signup():
     request_data = request.get_json()
