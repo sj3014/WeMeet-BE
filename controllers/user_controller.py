@@ -54,7 +54,7 @@ def login():
 
 
 def get_users():
-    users = [user.public_info() for user in User.query.all()]
+    users = [user.deserialize() for user in User.query.all()]
 
     return make_response(users, 200)
 
