@@ -34,6 +34,9 @@ def create_schedule(user: User):
     start_time = req['start_time']
     end_time = req['end_time']
     description = req['description']
+    all_day = req['all_day']
+    recurrence_rule = req['recurrence_rule']
+    meta_data = req['meta_data']
 
     user_id = user.uuid
 
@@ -42,7 +45,7 @@ def create_schedule(user: User):
     if schedule_exist:
         return make_response('Schedule already exists', 400)
 
-    new_schedule = Schedule(schedule_name, start_time, end_time, description, user_id)
+    new_schedule = Schedule(schedule_name, start_time, end_time, description, all_day, recurrence_rule,  meta_data, user_id)
     db.session.add(new_schedule)
     db.session.commit()
 
@@ -67,12 +70,18 @@ def update_schedule(user: User, schedule_id: str):
     start_time = req['start_time']
     end_time = req['end_time']
     description = req['description']
+    all_day = req['all_day']
+    recurrence_rule = req['recurrence_rule']
+    meta_data = req['meta_data']
 
     schedule = Schedule.query.filter_by(uuid=schedule_id, user_id=user.uuid).first()
     if schedule:
         schedule.start_time = start_time
         schedule.end_time = end_time
         schedule.description = description
+        schedule.all_day = all_day
+        schedule.recurrence_rule = recurrence_rule
+        schedule.meta_data = meta_data
         db.session.commit()
         return make_response('Success', 200)
     else:
