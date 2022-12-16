@@ -68,7 +68,7 @@ def update_user(user: User):
     if 'first_name' in req:
         user.first_name = req['first_name']
     if 'user_name' in req:
-        user.first_name = req['first_name']
+        user.user_name = req['user_name']
     if 'last_name' in req:
         user.last_name = req['last_name']
 
