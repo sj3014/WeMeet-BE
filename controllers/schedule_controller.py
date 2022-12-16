@@ -10,10 +10,18 @@ from middleware import login_required
 import config
 
 
-def list_schedules():
-    schedules = [schedule.public_info() for schedule in Schedule.query.all()]
-
-    return make_response(schedules, 200)
+@login_required
+def get_schedule(user: User, schedule_id: str):
+    schedule = Schedule.query.filter_by(uuid=schedule_id, user_id=user.uuid).first()
+    if schedule:
+        return make_response({
+            'schedule_name': schedule.schedule_name,
+            'start_time': schedule.start_time,
+            'end_time': schedule.end_time,
+            'description': schedule.description
+        }, 200)
+    else:
+        return make_response('Schedule not found', 404)
 
 @login_required
 def create_schedule(user: User):
