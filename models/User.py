@@ -31,3 +31,6 @@ class User(db.Model):
 
     def public_info(self):
         return {'email': self.email, 'first_name': self.first_name, 'last_name': self.last_name}
+
+    def deserialize_groups(self):
+        return {'username': self.username, 'groups': [group.deserialize() for group in self.groups]}
