@@ -11,3 +11,9 @@ class Group(db.Model):
 
     def __repr__(self):
         return '<Group {}>'.format(self.group_name)
+
+    def __init__(self, group_name):
+        self.group_name = group_name
+
+    def deserialize(self):
+        return {"group_id": self.uuid, "group_name": self.group_name}
