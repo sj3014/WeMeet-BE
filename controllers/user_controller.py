@@ -67,7 +67,8 @@ def update_user(user: User):
         user.email = req['email']
     if 'first_name' in req:
         user.first_name = req['first_name']
-
+    if 'user_name' in req:
+        user.first_name = req['first_name']
     if 'last_name' in req:
         user.last_name = req['last_name']
 
@@ -83,6 +84,7 @@ def update_user(user: User):
 def info(user: User):
     return make_response({
         'email': user.email,
+        'user_name': user.username,
         'first_name': user.first_name,
         'last_name': user.last_name
     }, 200)
