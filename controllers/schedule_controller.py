@@ -11,7 +11,7 @@ import config
 
 
 @login_required
-def get_schedule(user: User, schedule_id: str):
+def get_schedule(user: User):
     schedules = Schedule.query.filter_by(user_id=user.uuid).all()
     if schedules:
         schedules_list = [{
