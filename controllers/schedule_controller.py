@@ -38,3 +38,33 @@ def create_schedule(user: User):
     db.session.commit()
 
     return make_response('Success', 200)
+
+@login_required
+def delete_schedule(user: User, schedule_id: str):
+    req = request.get_data()
+
+    schedule = Schedule.query.filter_by(uuid=schedule_id, user_id=user.uuid).first()
+    if schedule:
+        db.session.delete(schedule)
+        db.session.commit()
+        return make_response('Success', 200)
+    else:
+        return make_response('Schedule not found', 404)
+
+@login_required
+def update_schedule(user: User, schedule_id: str):
+    req = request.get_data()
+    req = json.loads(req)
+    start_time = req['start_time']
+    end_time = req['end_time']
+    description = req['description']
+
+    schedule = Schedule.query.filter_by(uuid=schedule_id, user_id=user.uuid).first()
+    if schedule:
+        schedule.start_time = start_time
+        schedule.end_time = end_time
+        schedule.description = description
+        db.session.commit()
+        return make_response('Success', 200)
+    else:
+        return make_response('Schedule not found', 404)
