@@ -1,7 +1,9 @@
 from flask import Blueprint
 from controllers.group_controller import *
+from flask_cors import CORS
 
 group_routes = Blueprint('group_routes', __name__)
+CORS(group_routes)
 
 group_routes.route('/', methods=['POST'])(create_group)
 group_routes.route('/list', methods=['GET'])(get_groups)

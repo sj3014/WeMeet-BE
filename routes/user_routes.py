@@ -1,7 +1,9 @@
 from flask import Blueprint
 from controllers.user_controller import *
+from flask_cors import CORS
 
 user_routes = Blueprint('user_routes', __name__)
+CORS(user_routes)
 
 user_routes.route('/signup', methods=['POST'])(signup)
 user_routes.route('/login', methods=['POST'])(login)
