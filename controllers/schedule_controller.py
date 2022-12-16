@@ -12,16 +12,17 @@ import config
 
 @login_required
 def get_schedule(user: User, schedule_id: str):
-    schedule = Schedule.query.filter_by(uuid=schedule_id, user_id=user.uuid).first()
-    if schedule:
-        return make_response({
+    schedules = Schedule.query.filter_by(user_id=user.uuid).all()
+    if schedules:
+        schedules_list = [{
             'schedule_name': schedule.schedule_name,
             'start_time': schedule.start_time,
             'end_time': schedule.end_time,
             'description': schedule.description
-        }, 200)
+        } for schedule in schedules]
+        return make_response(schedules_list, 200)
     else:
-        return make_response('Schedule not found', 404)
+        return make_response('No schedules found', 404)
 
 @login_required
 def create_schedule(user: User):
