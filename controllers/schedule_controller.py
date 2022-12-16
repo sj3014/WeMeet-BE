@@ -2,6 +2,7 @@ from flask import request, make_response
 import jwt
 from models.Schedule import Schedule
 from models.database import db
+from models.User import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import json
@@ -14,8 +15,8 @@ def list_schedules():
 
     return make_response(schedules, 200)
 
-
-def create_schedule():
+@login_required
+def create_schedule(user: User):
     req = request.get_data()
     # req = request.get_json()
     req = json.loads(req)
@@ -25,7 +26,7 @@ def create_schedule():
     end_time = req['end_time']
     description = req['description']
 
-    user_id = "7e1c6019-2f94-4281-938a-82c89eb28cb6"
+    user_id = user.uuid
 
     schedule_exist = Schedule.query.filter_by(schedule_name=schedule_name).first()
 
