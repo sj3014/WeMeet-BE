@@ -14,7 +14,7 @@ def add_comment(user: User, group_id: str):
     req = json.loads(req)
     client = boto3.client(
         "dynamodb",
-        aws_access_key_id=Config.AWS_DYNAMO_ACCESKEY,
+        aws_access_key_id=Config.AWS_DYNAMO_ACCESSKEY,
         aws_secret_access_key= Config.AWS_DYNAMO_SECRETKEY
     )
     response = client.put_item(
@@ -59,7 +59,7 @@ def create_group(user: User):
         TopicArn=topic_arn,
         Message=json.dumps(message)
     )
-    print(response)
+    print("Added to group ", response)
 
     return make_response('Success', 200)
 
