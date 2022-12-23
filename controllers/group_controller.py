@@ -5,6 +5,7 @@ from models.User import User
 import json
 from middleware import login_required
 import boto3
+from config import Config
 
 @login_required
 def create_group(user: User):
@@ -14,8 +15,8 @@ def create_group(user: User):
 
     group = Group(req['group_name'])
     user.groups.append(group)
-    #db.session.add(group)
-    #db.session.commit()
+    db.session.add(group)
+    db.session.commit()
 
     email_address = user.email
     email_title = "WeMeet: You have been added to a new group"
@@ -24,8 +25,8 @@ def create_group(user: User):
     topic_arn = "arn:aws:sns:us-east-1:467428421438:NewGroupMemberDetected"
     sns = boto3.client('sns',
         region_name='us-east-1',
-        aws_access_key_id="AKIAWZVHHV47GNNQJPMM",
-        aws_secret_access_key= "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"
+        aws_access_key_id=Config.AWS_SNS_ACCESSKEY,
+        aws_secret_access_key= Config.AWS_SNS_SECRETKEY
     )
 
     message = {
