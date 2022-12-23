@@ -18,7 +18,10 @@ def get_schedule(user: User):
             'schedule_name': schedule.schedule_name,
             'start_time': schedule.start_time,
             'end_time': schedule.end_time,
-            'description': schedule.description
+            'description': schedule.description,
+            'all_day': schedule.all_day,
+            'recurrence_rule': schedule.recurrence_rule,
+            'meta_data': schedule.meta_data
         } for schedule in schedules]
         return make_response(schedules_list, 200)
     else:
