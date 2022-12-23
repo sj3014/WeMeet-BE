@@ -4,7 +4,29 @@ from models.Group import Group
 from models.User import User
 import json
 from middleware import login_required
+import boto3
+from datetime import datetime
+from config import Config
 
+@login_required
+def add_comment(user: User, group_id: str):
+    req = request.get_data()
+    req = json.loads(req)
+    client = boto3.client(
+        "dynamodb",
+        aws_access_key_id=Config.AWS_DYNAMO_ACCESKEY,
+        aws_secret_access_key= Config.AWS_DYNAMO_SECRETKEY
+    )
+    response = client.put_item(
+        TableName="GroupComment",
+        Item={
+            group_id: {
+                'Timestamp': datetime().utcnow(),
+                'user_id': user.uuid,
+                'message': req['message'],
+            }
+        }
+    )
 
 @login_required
 def create_group(user: User):
