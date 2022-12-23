@@ -3,6 +3,7 @@ import jwt
 from models.Schedule import Schedule
 from models.database import db
 from models.User import User
+from models.Group import Group
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import json
@@ -26,7 +27,31 @@ def get_schedule(user: User):
         } for schedule in schedules]
         return make_response(schedules_list, 200)
     else:
-        return make_response('No schedules found', 404)
+        return make_response([], 200)
+
+
+@login_required
+def get_group_schedule(user: User, group_id: str):
+    users = User.query.join(User, Group.users).filter(
+        Group.uuid == group_id).all()
+    group_schedules = []
+
+    for user in users:
+        user_schedules = Schedule.query.filter_by(user_id=user.uuid).all()
+        for schedule in user_schedules:
+            group_schedules.append({
+                'schedule_name': schedule.schedule_name,
+                'start_time': schedule.start_time,
+                'end_time': schedule.end_time,
+                'description': schedule.description,
+                'all_day': schedule.all_day,
+                'recurrence_rule': schedule.recurrence_rule,
+                'meta_data': schedule.meta_data,
+                'uuid': schedule.uuid
+            }
+            )
+    return make_response(group_schedules, 200)
+
 
 @login_required
 def create_schedule(user: User):
@@ -44,28 +69,33 @@ def create_schedule(user: User):
 
     user_id = user.uuid
 
-    schedule_exist = Schedule.query.filter_by(schedule_name=schedule_name).first()
+    schedule_exist = Schedule.query.filter_by(
+        schedule_name=schedule_name).first()
 
     if schedule_exist:
         return make_response('Schedule already exists', 400)
 
-    new_schedule = Schedule(schedule_name, start_time, end_time, description, all_day, recurrence_rule,  meta_data, user_id)
+    new_schedule = Schedule(schedule_name, start_time, end_time,
+                            description, all_day, recurrence_rule,  meta_data, user_id)
     db.session.add(new_schedule)
     db.session.commit()
 
     return make_response('Success', 200)
 
+
 @login_required
 def delete_schedule(user: User, schedule_id: str):
     req = request.get_data()
 
-    schedule = Schedule.query.filter_by(uuid=schedule_id, user_id=user.uuid).first()
+    schedule = Schedule.query.filter_by(
+        uuid=schedule_id, user_id=user.uuid).first()
     if schedule:
         db.session.delete(schedule)
         db.session.commit()
         return make_response('Success', 200)
     else:
         return make_response('Schedule not found', 404)
+
 
 @login_required
 def update_schedule(user: User, schedule_id: str):
@@ -78,7 +108,8 @@ def update_schedule(user: User, schedule_id: str):
     recurrence_rule = req['recurrence_rule']
     meta_data = req['meta_data']
 
-    schedule = Schedule.query.filter_by(uuid=schedule_id, user_id=user.uuid).first()
+    schedule = Schedule.query.filter_by(
+        uuid=schedule_id, user_id=user.uuid).first()
     if schedule:
         schedule.start_time = start_time
         schedule.end_time = end_time

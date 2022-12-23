@@ -9,4 +9,4 @@ schedule_routes.route('/', methods=['GET'])(get_schedule)
 schedule_routes.route('/', methods=['POST'])(create_schedule)
 schedule_routes.route('/<schedule_id>', methods=['PUT'])(update_schedule)
 schedule_routes.route('/<schedule_id>', methods=['DELETE'])(delete_schedule)
-
+schedule_routes.route('/group/<group_id>', methods=['GET'])(get_group_schedule)
