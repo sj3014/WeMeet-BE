@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import json
 from middleware import login_required
 import config
+from controllers.email_lambda import send_email_sns
 
 
 @login_required
@@ -79,6 +80,12 @@ def create_schedule(user: User):
                             description, all_day, recurrence_rule,  meta_data, user_id)
     db.session.add(new_schedule)
     db.session.commit()
+
+    email_to = f"{user.email}"
+    email_subject = "A new schedule has been created"
+    email_body = f"{user.first_name} created a new schedule {schedule_name} between {start_time} and {end_time}"
+    response = send_email_sns(email_to, email_subject, email_body)
+    print(response)
 
     return make_response('Success', 200)
 
