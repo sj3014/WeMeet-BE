@@ -3,7 +3,7 @@ from config import Config
 import json
 
 def send_email_sns(to, subject, body):
-    topic_arn = "arn:aws:sns:us-east-1:467428421438:NewGroupMemberDetected"
+    topic_arn = "arn:aws:sns:us-east-1:467428421438:NewScheduleTopic"
     sns = boto3.client('sns',
         region_name='us-east-1',
         aws_access_key_id=Config.AWS_SNS_ACCESSKEY,
